@@ -1,27 +1,14 @@
 import { useState } from 'react'
 
-const Person = ({person}) =>
-  <p>{person.name} {person.number}</p>
+const Filter = ({filter, setFilter}) =>
+  <>
+    filter shown with
+    <input value={filter} onChange={(event) => setFilter(event.target.value)} />
+  </>
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-  ])
-
+const PersonForm = ({persons, setPersons}) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState('')
-  const [displayPersons, setDisplayPersons] = useState(persons)
-
-  const updateFilter = (event) => {
-    setFilter(event.target.value)
-    setDisplayPersons(persons.filter(
-      (person) => person.name.toLowerCase().indexOf(event.target.value) !== -1
-    ))
-  }
 
   const handleAdd = (event) => {
     event.preventDefault()
@@ -31,22 +18,41 @@ const App = () => {
       setPersons(persons.concat({id: persons.length + 1, name: newName, number: newNumber}))
     }
   }
+  return (
+    <form>
+      <div>name: <input value={newName} onChange={(event) => setNewName(event.target.value)} /></div>
+      <div>number: <input value={newNumber} onChange={(event) => setNewNumber(event.target.value)} /></div>
+      <div><button type="submit" onClick={handleAdd}>add</button></div>
+    </form>
+  )
+}
+
+const Person = ({person}) =>
+  <p>{person.name} {person.number}</p>
+
+const Persons = ({persons, filter}) =>
+  <>
+    {persons.filter((person) => person.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1).map((person) => <Person key={person.id} person={person} />)}
+  </>
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
+  ])
+
+  const [filter, setFilter] = useState('')
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with
-        <input value={filter} onChange={updateFilter} />
-      </div>
+      <Filter filter={filter} setFilter={setFilter} />
       <h2>add a new</h2>
-      <form>
-        <div>name: <input value={newName} onChange={(event) => setNewName(event.target.value)} /></div>
-        <div>number: <input value={newNumber} onChange={(event) => setNewNumber(event.target.value)} /></div>
-        <div><button type="submit" onClick={handleAdd}>add</button></div>
-      </form>
+      <PersonForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>
-      {displayPersons.map((person) => <Person key={person.name} person={person} />)}
+      <Persons persons={persons} filter={filter} />
     </div>
   )
 }
