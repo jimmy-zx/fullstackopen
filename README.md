@@ -1,6 +1,6 @@
 # Fullstackopen
-[Fullstackopen](https://fullstackopen.com/en/)
+Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
 - Lecture: `1.d`
-- Homework: `1.5`
+- Homework: `1.14`
