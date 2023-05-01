@@ -1,11 +1,19 @@
 import { useState } from 'react'
 
-const Stats = (props) => {
+const Stats = ({good, bad, neutral}) => {
+    const all = good + bad + neutral
+    const score = good - bad
+    const average = score / all
+    const positive = good / all
     return (
         <>
-            <p>good {props.good}</p>
-            <p>neutral {props.neutral}</p>
-            <p>bad {props.bad}</p>
+            <h1>statistics</h1>
+            <p>good {good}</p>
+            <p>neutral {neutral}</p>
+            <p>bad {bad}</p>
+            <p>all {all}</p>
+            <p>average {average}</p>
+            <p>positive {positive * 100}%</p>
         </>
     )
 }
