@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import noteService from './services/notes';
 
 const Filter = ({ filter, setFilter }) => (
   <>
@@ -17,13 +17,11 @@ const PersonForm = ({ persons, setPersons }) => {
     if (persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(
-        persons.concat({
-          id: persons.length + 1,
-          name: newName,
-          number: newNumber
-        })
-      );
+      noteService
+        .create({ name: newName, number: newNumber})
+        .then(data => {
+          setPersons(persons.concat(data));
+        });
     }
   };
   return (
@@ -74,10 +72,8 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {setPersons(response.data)})
-  }, [])
+    noteService.getAll().then(data => setPersons(data))
+  }, []);
 
   return (
     <div>
