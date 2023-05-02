@@ -17,11 +17,9 @@ const PersonForm = ({ persons, setPersons }) => {
     if (persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      noteService
-        .create({ name: newName, number: newNumber})
-        .then(data => {
-          setPersons(persons.concat(data));
-        });
+      noteService.create({ name: newName, number: newNumber }).then(data => {
+        setPersons(persons.concat(data));
+      });
     }
   };
   return (
@@ -49,20 +47,32 @@ const PersonForm = ({ persons, setPersons }) => {
   );
 };
 
-const Person = ({ person }) => (
-  <p>
-    {person.name} {person.number}
-  </p>
-);
+const Person = ({ person, persons, setPersons }) => {
+  const handleDelete = () => {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      noteService
+        .del(person.id)
+        .then(() => {
+          setPersons(persons.filter((p) => (p.id !== person.id)))
+        })
+    }
+  };
+  return (
+    <p>
+      {person.name} {person.number}
+      <button onClick={handleDelete}>delete</button>
+    </p>
+  );
+};
 
-const Persons = ({ persons, filter }) => (
+const Persons = ({ persons, filter, setPersons }) => (
   <>
     {persons
       .filter(
         person => person.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1
       )
       .map(person => (
-        <Person key={person.id} person={person} />
+        <Person key={person.id} person={person} persons={persons} setPersons={setPersons} />
       ))}
   </>
 );
@@ -72,7 +82,7 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    noteService.getAll().then(data => setPersons(data))
+    noteService.getAll().then(data => setPersons(data));
   }, []);
 
   return (
@@ -82,7 +92,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} setPersons={setPersons} />
     </div>
   );
 };

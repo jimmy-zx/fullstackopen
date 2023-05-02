@@ -17,6 +17,10 @@ const update = (id, newObject) =>
     .put(`${baseUrl}/${id}`, newObject)
     .then(response => response.data);
 
-const noteService = { getAll, create, update };
+const del = (id) =>
+  axios
+    .delete(`${baseUrl}/${id}`);
+
+const noteService = { getAll, create, update, del };
 
 export default noteService;
