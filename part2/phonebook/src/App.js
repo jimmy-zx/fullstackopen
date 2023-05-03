@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import noteService from './services/notes';
 
+const Notification = ({message}) =>
+  message === null ? null : (
+    <div className='error'>
+      {message}
+    </div>
+  )
+
 const Filter = ({ filter, setFilter }) => (
   <>
     filter shown with
@@ -8,7 +15,7 @@ const Filter = ({ filter, setFilter }) => (
   </>
 );
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setErrorMessage }) => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
 
@@ -25,11 +32,19 @@ const PersonForm = ({ persons, setPersons }) => {
           .update(person.id, newPerson)
           .then(() => {
             setPersons(persons.map((p) => p.name === newName ? newPerson : p));
+            setErrorMessage(`Updated ${newName}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
           })
       }
     } else {
       noteService.create({ name: newName, number: newNumber }).then(data => {
         setPersons(persons.concat(data));
+        setErrorMessage(`Added ${newName}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
     }
   };
@@ -91,6 +106,7 @@ const Persons = ({ persons, filter, setPersons }) => (
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     noteService.getAll().then(data => setPersons(data));
@@ -99,9 +115,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter filter={filter} setFilter={setFilter} />
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} setPersons={setPersons} setErrorMessage={setErrorMessage} />
       <h2>Numbers</h2>
       <Persons persons={persons} filter={filter} setPersons={setPersons} />
     </div>
