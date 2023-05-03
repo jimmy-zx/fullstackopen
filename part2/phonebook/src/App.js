@@ -37,6 +37,12 @@ const PersonForm = ({ persons, setPersons, setErrorMessage }) => {
               setErrorMessage(null);
             }, 5000);
           })
+          .catch(error => {
+            setErrorMessage(`Information of ${newName} has already been removed from the server`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       }
     } else {
       noteService.create({ name: newName, number: newNumber }).then(data => {
@@ -73,7 +79,7 @@ const PersonForm = ({ persons, setPersons, setErrorMessage }) => {
   );
 };
 
-const Person = ({ person, persons, setPersons }) => {
+const Person = ({ person, persons, setPersons, setErrorMessage }) => {
   const handleDelete = () => {
     if (window.confirm(`Delete ${person.name} ?`)) {
       noteService
@@ -81,6 +87,12 @@ const Person = ({ person, persons, setPersons }) => {
         .then(() => {
           setPersons(persons.filter((p) => (p.id !== person.id)))
         })
+        .catch(error => {
+          setErrorMessage(`Information of ${person.name} has already been removed from the server`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   };
   return (
@@ -91,14 +103,14 @@ const Person = ({ person, persons, setPersons }) => {
   );
 };
 
-const Persons = ({ persons, filter, setPersons }) => (
+const Persons = ({ persons, filter, setPersons, setErrorMessage }) => (
   <>
     {persons
       .filter(
         person => person.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1
       )
       .map(person => (
-        <Person key={person.id} person={person} persons={persons} setPersons={setPersons} />
+        <Person key={person.id} person={person} persons={persons} setPersons={setPersons} setErrorMessage={setErrorMessage} />
       ))}
   </>
 );
@@ -120,7 +132,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm persons={persons} setPersons={setPersons} setErrorMessage={setErrorMessage} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} setPersons={setPersons} />
+      <Persons persons={persons} filter={filter} setPersons={setPersons} setErrorMessage={setErrorMessage} />
     </div>
   );
 };
