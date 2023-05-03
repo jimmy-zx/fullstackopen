@@ -2,8 +2,8 @@
 Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
-- Lecture: `2.c`
-- Homework: `2.10`
+- Lecture: `2.e`
+- Homework: `2.18`
 
 ## Dependencies
 
