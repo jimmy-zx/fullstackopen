@@ -3,7 +3,7 @@ Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
 - Lecture: `2.e`
-- Homework: `2.18`
+- Homework: `2.20`
 
 ## Dependencies
 
