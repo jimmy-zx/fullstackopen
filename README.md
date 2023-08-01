@@ -2,8 +2,15 @@
 Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
-- Lecture: `2.e`
-- Homework: `2.20`
+- Lecture: `3.b`
+- Homework: `3.10`
+
+## Homework
+
+### 3.10
+
+[phonebook](/part3/phonebook) deployed at
+[https://phonebook-naob.onrender.com/api/persons](https://phonebook-naob.onrender.com/api/persons).
 
 ## Dependencies
 
