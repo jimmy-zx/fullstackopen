@@ -9,8 +9,8 @@ Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ### 3.10
 
-[phonebook](/part3/phonebook) deployed at
-[https://phonebook-naob.onrender.com/api/persons](https://phonebook-naob.onrender.com/api/persons).
+The phonebook [backend](/part3/phonebook) and [frontend](/part2/phonebook) are deployed at
+[https://phonebook-naob.onrender.com/](https://phonebook-naob.onrender.com/).
 
 ## Dependencies
 
