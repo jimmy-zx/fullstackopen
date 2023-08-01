@@ -1,6 +1,9 @@
 const express = require('express');
 
 const app = express();
+app.use(express.json());
+
+const MAX_ID = 2 ** 32;
 
 let data = [
   {
@@ -51,6 +54,13 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
   data = data.filter(person => person.id !== id);
   response.status(204).end();
+});
+
+app.post('/api/notes', (request, response) => {
+  const person = request.body;
+  person.id = Math.floor(MAX_ID * Math.random());
+  data = data.concat(person);
+  response.json(person);
 });
 
 const PORT = 3001;
