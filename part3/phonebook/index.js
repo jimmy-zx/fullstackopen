@@ -64,10 +64,11 @@ app.post('/api/notes', (request, response) => {
     response.status(400).json({ error: 'missing number' });
   } else if (data.find(entry => person.name === entry.name)) {
     response.status(400).json({ error: 'name must be unique' });
+  } else {
+    person.id = Math.floor(MAX_ID * Math.random());
+    data = data.concat(person);
+    response.json(person);
   }
-  person.id = Math.floor(MAX_ID * Math.random());
-  data = data.concat(person);
-  response.json(person);
 });
 
 const PORT = 3001;
