@@ -3,7 +3,7 @@ Solutions for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
 - Lecture: `3.b`
-- Homework: `3.10`
+- Homework: `3.21`
 
 ## Homework
 
