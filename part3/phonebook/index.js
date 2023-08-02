@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const Person = require('./models/person');
 
 const app = express();
 app.use(express.static('build'));
@@ -36,7 +37,9 @@ let data = [
 ];
 
 app.get('/api/persons', (request, response) => {
-  response.json(data);
+  Person.find({}).then(people => {
+    response.json(people);
+  });
 });
 
 app.get('/info', (request, response) => {
@@ -48,13 +51,12 @@ app.get('/info', (request, response) => {
 });
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const person = data.find(person => person.id === id);
-  if (person) {
+  Person.findById(request.params.id).then(person => {
+    if (!person) {
+      return response.status(404).end();
+    }
     response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  });
 });
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -64,18 +66,25 @@ app.delete('/api/persons/:id', (request, response) => {
 });
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body;
-  if (!person.name) {
-    response.status(400).json({ error: 'missing name' });
-  } else if (!person.number) {
-    response.status(400).json({ error: 'missing number' });
-  } else if (data.find(entry => person.name === entry.name)) {
-    response.status(400).json({ error: 'name must be unique' });
-  } else {
-    person.id = Math.floor(MAX_ID * Math.random());
-    data = data.concat(person);
-    response.json(person);
+  const body = request.body;
+  if (!body.name) {
+    return response.status(400).json({ error: 'missing name' });
   }
+  if (!body.number) {
+    return response.status(400).json({ error: 'missing number' });
+  }
+  if (data.find(entry => body.name === entry.name)) {
+    return response.status(400).json({ error: 'name must be unique' });
+  }
+
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  });
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
