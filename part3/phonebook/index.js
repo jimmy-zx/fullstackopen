@@ -104,6 +104,14 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
+app.use((error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+  next(error);
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
