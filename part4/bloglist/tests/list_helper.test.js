@@ -134,3 +134,23 @@ describe('most blog', () => {
     });
   });
 });
+
+describe('most likes', () => {
+  test('empty list', () => {
+    expect(listHelper.mostLikes([])).toBe(undefined);
+  });
+
+  test('one element', () => {
+    expect(listHelper.mostLikes(listWithOneBlog)).toEqual({
+      likes: 5,
+      author: 'Edsger W. Dijkstra'
+    });
+  });
+
+  test('sample list', () => {
+    expect(listHelper.mostLikes(blogs)).toEqual({
+      likes: 17,
+      author: 'Edsger W. Dijkstra'
+    });
+  });
+});
