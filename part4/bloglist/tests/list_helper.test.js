@@ -114,3 +114,23 @@ describe('favorite blog', () => {
     });
   });
 });
+
+describe('most blog', () => {
+  test('empty list', () => {
+    expect(listHelper.mostBlogs([])).toBe(undefined);
+  });
+
+  test('one element', () => {
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({
+      blogs: 1,
+      author: 'Edsger W. Dijkstra'
+    });
+  });
+
+  test('sample list', () => {
+    expect(listHelper.mostBlogs(blogs)).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    });
+  });
+});
