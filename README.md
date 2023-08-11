@@ -1,16 +1,19 @@
 # Fullstackopen
-Solutions for [fullstackopen](https://fullstackopen.com/en/).
+
+Exercises for [fullstackopen](https://fullstackopen.com/en/).
 
 ## Progress
-- Lecture: `3.b`
-- Homework: `3.21`
 
-## Homework
+| Item | Progress |
+|-|-|
+| Lecture | `4.b` |
+| Homework | `4.7` |
 
-### 3.10
+## Deployments
 
-The phonebook [backend](/part3/phonebook) and [frontend](/part2/phonebook) are deployed at
-[https://phonebook-naob.onrender.com/](https://phonebook-naob.onrender.com/).
+| Name | Target | Status
+|-|-|-|
+| phonebook | https://phonebook-naob.onrender.com/ | suspended |
 
 ## Dependencies
 
