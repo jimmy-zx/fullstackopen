@@ -70,11 +70,20 @@ beforeEach(async () => {
   }
 });
 
-test('GET /api/blogs', async () => {
-  const response = await api.get('/api/blogs')
+test('GET /api/blogs returns JSON', async () => {
+  await api.get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/);
+}, 1000);
+
+test('GET /api/blogs returns correct amount', async () => {
+  const response = await api.get('/api/blogs');
   expect(response.body).toHaveLength(initBlogs.length);
+}, 1000);
+
+test('GET /api/blogs returns id', async () => {
+  const response = await api.get('/api/blogs');
+  response.body.forEach((blog) => expect(blog.id).toBeDefined());
 }, 1000);
 
 afterAll(async () => {
