@@ -125,6 +125,17 @@ describe('POST /api/blogs', () => {
     const addedBlogs = await Blog.find({ title: newBlog.title });
     expect(addedBlogs[0].likes).toBe(0);
   });
+
+  test('title and url are required', async () => {
+    await api
+      .post('/api/blogs')
+      .send({ title: 'New blog', author: 'The author' })
+      .expect(400);
+    await api
+      .post('/api/blogs')
+      .send({ author: 'The author', url: 'http://example.com' })
+      .expect(400);
+  });
 });
 
 afterAll(async () => {
