@@ -149,16 +149,54 @@ describe('DELETE /api/blogs', () => {
 
   test('Successful deletion', async () => {
     const blogs = await Blog.find({});
-    await api
-      .delete(`/api/blogs/${blogs[0]._id}`)
-      .expect(204);
+    await api.delete(`/api/blogs/${blogs[0]._id}`).expect(204);
     expect(await Blog.findById(blogs[0]._id)).toBeNull();
     expect(await Blog.find({})).toHaveLength(initBlogs.length - 1);
   });
 
   test('Unsuccessful deletion', async () => {
+    await api.delete('/api/blogs/1').expect(400);
+  });
+});
+
+describe('DELETE /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    for (const blog of initBlogs) {
+      const blogObj = new Blog(blog);
+      await blogObj.save();
+    }
+  });
+
+  test('Existing put', async () => {
+    const blogs = await Blog.find({});
+    const blog = { title: 'Updated blog', url: 'http://updated.com' };
+    const response = await api
+      .put(`/api/blogs/${blogs[0]._id}`)
+      .send(blog)
+      .expect(200);
+    expect(response.body.title).toEqual(blog.title);
+    expect(response.body.url).toEqual(blog.url);
+    expect(await Blog.find({})).toHaveLength(initBlogs.length);
+  });
+
+  test('New put', async () => {
+    const newBlog = {
+      title: 'New blog',
+      author: 'The author',
+      url: 'http://example.com/',
+      likes: 15
+    };
     await api
-      .delete('/api/blogs/1')
+      .put('/api/blogs/000000000000000000000000')
+      .send(newBlog)
+      .expect(200);
+  });
+
+  test('Invalid id', async () => {
+    await api
+      .put('/api/blogs/1')
+      .send({ title: 'New blog', url: 'http://example.com/' })
       .expect(400);
   });
 });
