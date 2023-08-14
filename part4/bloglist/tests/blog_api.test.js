@@ -62,29 +62,58 @@ const initBlogs = [
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl);
 
-beforeEach(async () => {
-  await Blog.deleteMany({});
-  for (const blog of initBlogs) {
-    const blogObj = new Blog(blog);
-    await blogObj.save();
-  }
+describe('GET /api/blogs', () => {
+  beforeAll(async () => {
+    await Blog.deleteMany({});
+    for (const blog of initBlogs) {
+      const blogObj = new Blog(blog);
+      await blogObj.save();
+    }
+  });
+
+  test('Content-Type is JSON', async () => {
+    await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  }, 1000);
+
+  test('Returns correct amount', async () => {
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(initBlogs.length);
+  }, 1000);
+
+  test('Returns id', async () => {
+    const response = await api.get('/api/blogs');
+    response.body.forEach((blog) => expect(blog.id).toBeDefined());
+  }, 1000);
 });
 
-test('GET /api/blogs returns JSON', async () => {
-  await api.get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-}, 1000);
+describe('POST /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    for (const blog of initBlogs) {
+      const blogObj = new Blog(blog);
+      await blogObj.save();
+    }
+  });
 
-test('GET /api/blogs returns correct amount', async () => {
-  const response = await api.get('/api/blogs');
-  expect(response.body).toHaveLength(initBlogs.length);
-}, 1000);
-
-test('GET /api/blogs returns id', async () => {
-  const response = await api.get('/api/blogs');
-  response.body.forEach((blog) => expect(blog.id).toBeDefined());
-}, 1000);
+  test('Adds blog', async () => {
+    const newBlog = {
+      title: 'New blog',
+      author: 'The author',
+      url: 'http://example.com/',
+      likes: 15
+    };
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const updatedBlogs = await Blog.find({});
+    expect(updatedBlogs).toHaveLength(initBlogs.length + 1);
+    expect(JSON.stringify(updatedBlogs)).toContain('New blog');
+  });
+});
 
 afterAll(async () => {
   await mongoose.connection.close();
