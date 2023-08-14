@@ -72,7 +72,8 @@ describe('GET /api/blogs', () => {
   });
 
   test('Content-Type is JSON', async () => {
-    await api.get('/api/blogs')
+    await api
+      .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/);
   }, 1000);
@@ -84,7 +85,7 @@ describe('GET /api/blogs', () => {
 
   test('Returns id', async () => {
     const response = await api.get('/api/blogs');
-    response.body.forEach((blog) => expect(blog.id).toBeDefined());
+    response.body.forEach(blog => expect(blog.id).toBeDefined());
   }, 1000);
 });
 
@@ -112,6 +113,17 @@ describe('POST /api/blogs', () => {
     const updatedBlogs = await Blog.find({});
     expect(updatedBlogs).toHaveLength(initBlogs.length + 1);
     expect(JSON.stringify(updatedBlogs)).toContain('New blog');
+  });
+
+  test('Default value for likes', async () => {
+    const newBlog = {
+      title: 'New blog',
+      author: 'The author',
+      url: 'http://example.com/'
+    };
+    await api.post('/api/blogs').send(newBlog);
+    const addedBlogs = await Blog.find({ title: newBlog.title });
+    expect(addedBlogs[0].likes).toBe(0);
   });
 });
 
