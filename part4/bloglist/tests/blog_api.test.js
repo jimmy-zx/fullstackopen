@@ -138,6 +138,31 @@ describe('POST /api/blogs', () => {
   });
 });
 
+describe('DELETE /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    for (const blog of initBlogs) {
+      const blogObj = new Blog(blog);
+      await blogObj.save();
+    }
+  });
+
+  test('Successful deletion', async () => {
+    const blogs = await Blog.find({});
+    await api
+      .delete(`/api/blogs/${blogs[0]._id}`)
+      .expect(204);
+    expect(await Blog.findById(blogs[0]._id)).toBeNull();
+    expect(await Blog.find({})).toHaveLength(initBlogs.length - 1);
+  });
+
+  test('Unsuccessful deletion', async () => {
+    await api
+      .delete('/api/blogs/1')
+      .expect(400);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
