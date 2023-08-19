@@ -3,21 +3,14 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
-const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const { setup } = require('../utils/test_helper.js');
 
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl);
 
 describe('POST /api/users', () => {
-  beforeAll(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash('sekret', 10);
-    const user = new User({ username: 'root', passwordHash });
-
-    await user.save();
-  });
+  beforeAll(setup);
 
   test('single creation', async () => {
     const newUser = {
