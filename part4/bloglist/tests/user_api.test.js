@@ -54,6 +54,42 @@ describe('POST /api/users', () => {
 
     expect(await User.find({})).toEqual(usersAtStart);
   });
+
+  test('username required', async () => {
+    const result = await api
+      .post('/api/users')
+      .send({ password: '1234' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+    expect(result.body.error).toContain('username');
+  });
+
+  test('username minLength', async () => {
+    const result = await api
+      .post('/api/users')
+      .send({ username: 'ab', password: '1234' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+    expect(result.body.error).toContain('username');
+  });
+
+  test('password required', async () => {
+    const result = await api
+      .post('/api/users')
+      .send({ username: 'abc' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+    expect(result.body.error).toMatch(/password/i);
+  });
+
+  test('password minLength', async () => {
+    const result = await api
+      .post('/api/users')
+      .send({ username: 'abc', password: '12' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+    expect(result.body.error).toMatch(/password/i);
+  });
 });
 
 afterAll(async () => {
