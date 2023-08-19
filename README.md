@@ -6,8 +6,8 @@ Exercises for [fullstackopen](https://fullstackopen.com/en/).
 
 | Item | Progress |
 |-|-|
-| Lecture | `4.c` |
-| Homework | `4.14` |
+| Lecture | `4.d` |
+| Homework | `4.20` |
 
 ## Deployments
 
