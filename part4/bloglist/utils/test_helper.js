@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
-let rootUser = {
+const rootUser = {
   username: 'root',
   _id: '64e1112dabaed996cca8afb9',
   passwordHash: bcrypt.hashSync('sekret', 10),
