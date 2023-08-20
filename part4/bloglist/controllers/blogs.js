@@ -1,8 +1,5 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
-const config = require('../utils/config');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user');
@@ -10,11 +7,10 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, config.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'invalid token' });
+  const user = request.user;
+  if (!user) {
+    return response.status(401).end();
   }
-  const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({ ...request.body, user: user.id });
   const savedBlog = await blog.save();
@@ -26,21 +22,21 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, config.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'invalid token' });
+  const user = request.user;
+  if (!user) {
+    return response.status(401).end();
   }
   const blog = await Blog.findById(request.params.id).populate('user');
-  if (blog) {
-    if (blog.user.id !== decodedToken.id) {
-      return response.status(403).end();
-    }
-    blog.user.blogs.remove(blog.id);
-    await blog.user.save();
-    await blog.deleteOne();
-    return response.status(204).end();
+  if (!blog) {
+    return response.status(404).end();
   }
-  response.status(404).end();
+  if (blog.user.id !== user.id) {
+    return response.status(403).end();
+  }
+  user.blogs.remove(blog.id);
+  await user.save();
+  await blog.deleteOne();
+  response.status(204).end();
 });
 
 blogsRouter.put('/:id', async (request, response) => {
