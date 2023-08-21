@@ -4,7 +4,12 @@ const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
 const Blog = require('../models/blog');
-const { rootUser, initBlogs, setup } = require('../utils/test_helper');
+const {
+  rootUser,
+  initBlogs,
+  setup,
+  getHeader
+} = require('../utils/test_helper');
 
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl);
@@ -38,11 +43,11 @@ describe('POST /api/blogs', () => {
       title: 'New blog',
       author: 'The author',
       url: 'http://example.com/',
-      likes: 15,
-      user: rootUser._id
+      likes: 15
     };
     await api
       .post('/api/blogs')
+      .set(await getHeader(api))
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -55,10 +60,12 @@ describe('POST /api/blogs', () => {
     const newBlog = {
       title: 'New blog',
       author: 'The author',
-      url: 'http://example.com/',
-      user: rootUser._id
+      url: 'http://example.com/'
     };
-    await api.post('/api/blogs').send(newBlog);
+    await api
+      .post('/api/blogs')
+      .set(await getHeader(api))
+      .send(newBlog);
     const addedBlogs = await Blog.find({ title: newBlog.title });
     expect(addedBlogs[0].likes).toBe(0);
   });
@@ -66,14 +73,15 @@ describe('POST /api/blogs', () => {
   test('title and url are required', async () => {
     await api
       .post('/api/blogs')
+      .set(await getHeader(api))
       .send({ title: 'New blog', author: 'The author', user: rootUser._id })
       .expect(400);
     await api
       .post('/api/blogs')
+      .set(await getHeader(api))
       .send({
         author: 'The author',
-        url: 'http://example.com',
-        user: rootUser._id
+        url: 'http://example.com'
       })
       .expect(400);
   });
@@ -84,13 +92,13 @@ describe('DELETE /api/blogs', () => {
 
   test('Successful deletion', async () => {
     const blogs = await Blog.find({});
-    await api.delete(`/api/blogs/${blogs[0]._id}`).expect(204);
+    await api.delete(`/api/blogs/${blogs[0]._id}`).set(await getHeader(api)).expect(204);
     expect(await Blog.findById(blogs[0]._id)).toBeNull();
     expect(await Blog.find({})).toHaveLength(initBlogs.length - 1);
   });
 
   test('Unsuccessful deletion', async () => {
-    await api.delete('/api/blogs/1').expect(400);
+    await api.delete('/api/blogs/1').set(await getHeader(api)).expect(400);
   });
 });
 

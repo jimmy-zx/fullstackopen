@@ -4,6 +4,13 @@ const loginRouter = require('express').Router();
 const User = require('../models/user');
 const config = require('../utils/config');
 
+loginRouter.get('/', async (request, response) => {
+  if (request.user) {
+    return response.json(request.user);
+  }
+  response.status(401).end();
+});
+
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body;
 

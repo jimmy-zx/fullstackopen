@@ -9,8 +9,8 @@ TOKEN=$(curl "${HEADERS[@]}" $TARGET/api/login --data '{"username": "root", "pas
 
 HEADERS+=(-H "Authorization:Bearer $TOKEN")
 
-POSTID=$(curl "${HEADERS[@]}" $TARGET/api/blogs --data '{"title": "Title", "url": "example.com"}' | jq -r '.id')
+curl "${HEADERS[@]}" $TARGET/api/login
 
-echo "$POSTID"
-
-curl "${HEADERS[@]}" "$TARGET/api/blogs/$POSTID" -X DELETE
+# POSTID=$(curl "${HEADERS[@]}" $TARGET/api/blogs --data '{"title": "Title", "url": "example.com"}' | jq -r '.id')
+# echo "$POSTID"
+# curl "${HEADERS[@]}" "$TARGET/api/blogs/$POSTID" -X DELETE

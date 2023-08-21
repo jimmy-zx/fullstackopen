@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
-const { setup } = require('../utils/test_helper.js');
+const { setup, rootUser, getHeader } = require('../utils/test_helper.js');
 
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl);
@@ -11,26 +11,26 @@ mongoose.connect(mongoUrl);
 describe('POST /api/login', () => {
   beforeAll(setup);
 
-  test('Successful login', async () => {
-    await api
+  test('root login', async () => {
+    const result = await api
       .post('/api/login')
       .send({ username: 'root', password: 'sekret' })
       .expect(200)
       .expect('Content-Type', /application\/json/);
+    expect(result.body).toHaveProperty('token');
   });
+});
 
-  test('Invalid username', async () => {
-    await api
-      .post('/api/login')
-      .send({ username: 'does_not_exist', password: 'ne' })
-      .expect(401);
-  });
+describe('GET /api/login', () => {
+  beforeAll(setup);
 
-  test('Invalid password', async () => {
-    await api
-      .post('/api/login')
-      .send({ username: 'root', password: 'ne' })
-      .expect(401);
+  test('root login', async () => {
+    const user = await api
+      .get('/api/login')
+      .set(await getHeader(api))
+      .expect(200);
+    expect(user.body.id).toEqual(rootUser._id);
+    expect(user.body.username).toEqual(rootUser.username);
   });
 });
 

@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const config = require('./config');
 
 const rootUser = {
   username: 'root',
@@ -82,6 +84,13 @@ const setup = async () => {
   }
 };
 
+const getHeader = async api => {
+  const loginResult = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'sekret' });
+  return { Authorization: `Bearer ${loginResult.body.token}` };
+};
+
 const main = async () => {
   const config = require('./config');
   const mongoose = require('mongoose');
@@ -99,4 +108,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { rootUser, initBlogs, setup };
+module.exports = { rootUser, initBlogs, setup, getHeader };
