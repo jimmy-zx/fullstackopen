@@ -56,6 +56,19 @@ describe('POST /api/blogs', () => {
     expect(JSON.stringify(updatedBlogs)).toContain('New blog');
   });
 
+  test('Add blog without auth', async () => {
+    const newBlog = {
+      title: 'New blog',
+      author: 'The author',
+      url: 'http://example.com/',
+      likes: 15
+    };
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401);
+  });
+
   test('Default value for likes', async () => {
     const newBlog = {
       title: 'New blog',
